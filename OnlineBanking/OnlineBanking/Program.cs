@@ -31,7 +31,7 @@ namespace BankApp.ConsoleUI
                     if (currentUser == null)
                         Console.WriteLine(">> Error: Account not found!");
                 }
-                else if (authChoice == "2") // CREATE ACCOUNT
+                else if (authChoice == "2")
                 {
                     Console.WriteLine("\n--- Create Your Account ---");
                     Console.Write("Enter Full Name: ");
@@ -50,27 +50,23 @@ namespace BankApp.ConsoleUI
                     }
                     else
                     {
-                        // Create the user with 0 balance
                         User newUser = new User(name, newAccNum, 0);
                         repo.Register(newUser);
 
-                        // Success Message with the ID clearly displayed
                         Console.WriteLine("\n**********************************");
                         Console.WriteLine("  ACCOUNT CREATED SUCCESSFULLY!");
                         Console.WriteLine($"  Name: {newUser.AccountName}");
-                        Console.WriteLine($"  Your Account ID: {newUser.AccountNumber}"); // Showing the ID here
+                        Console.WriteLine($"  Your Account ID: {newUser.AccountNumber}");
                         Console.WriteLine("**********************************");
 
-                        // Auto-login: Set the currentUser immediately
                         currentUser = newUser;
                         Console.WriteLine("Logging you in automatically...");
-                        System.Threading.Thread.Sleep(1500); // Small pause for effect
+                        System.Threading.Thread.Sleep(1500);
                     }
                 }
                 else if (authChoice == "3") return;
             }
 
-            // --- MAIN BANKING MENU ---
             int choice = 0;
             while (choice != 6)
             {

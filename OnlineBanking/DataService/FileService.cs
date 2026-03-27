@@ -13,12 +13,11 @@ namespace BankApp.DataServices
         {
             List<User> users = GetAllFromBackup();
 
-            // Check if user already exists in JSON to avoid duplicates
             int index = users.FindIndex(u => u.AccountNumber == user.AccountNumber);
             if (index != -1)
-                users[index] = user; // Update existing
+                users[index] = user;
             else
-                users.Add(user); // Add new
+                users.Add(user);
 
             string json = JsonConvert.SerializeObject(users, Formatting.Indented);
             File.WriteAllText(_filePath, json);

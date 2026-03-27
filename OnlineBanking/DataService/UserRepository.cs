@@ -12,7 +12,6 @@ namespace BankApp.DataServices
 
         public User GetByAccountNumber(string accNum)
         {
-            // 1. Try to get from MySQL Database
             try
             {
                 using (var conn = _db.GetConnection())
@@ -41,7 +40,6 @@ namespace BankApp.DataServices
             {
                 Console.WriteLine($">> Database offline. Searching JSON backup... ({ex.Message})");
 
-                // 2. FALLBACK: If DB fails, search the JSON file
                 var backupUsers = _fileService.GetAllFromBackup();
                 return backupUsers.FirstOrDefault(u => u.AccountNumber == accNum);
             }
@@ -50,7 +48,6 @@ namespace BankApp.DataServices
 
         public void Register(User user)
         {
-            // Save to MySQL
             try
             {
                 using (var conn = _db.GetConnection())
@@ -71,7 +68,6 @@ namespace BankApp.DataServices
                 Console.WriteLine($">> DB Sync Error: {ex.Message}");
             }
 
-            // Always save to JSON Backup as well
             _fileService.SaveToBackup(user);
         }
 
@@ -82,7 +78,7 @@ namespace BankApp.DataServices
 
         public void UpdateBalance(User user)
         {
-            // Update MySQL
+
             try
             {
                 using (var conn = _db.GetConnection())
@@ -102,7 +98,6 @@ namespace BankApp.DataServices
                 Console.WriteLine($">> DB Update Error: {ex.Message}");
             }
 
-            // Update JSON Backup
             _fileService.SaveToBackup(user);
         }
     }

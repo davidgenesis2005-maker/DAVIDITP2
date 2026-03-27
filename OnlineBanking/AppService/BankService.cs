@@ -12,7 +12,7 @@ namespace BankApp.AppService
             if (amount > 0)
             {
                 account.Balance += amount;
-                _repo.UpdateBalance(account); // Save to MySQL
+                _repo.UpdateBalance(account);
                 System.Console.WriteLine("Deposit Successful!");
             }
         }
@@ -22,7 +22,7 @@ namespace BankApp.AppService
             if (amount > 0 && amount <= account.Balance)
             {
                 account.Balance -= amount;
-                _repo.UpdateBalance(account); // Save to MySQL
+                _repo.UpdateBalance(account); 
                 System.Console.WriteLine("Withdrawal Successful!");
             }
         }
@@ -33,8 +33,8 @@ namespace BankApp.AppService
             {
                 sender.Balance -= amount;
                 receiver.Balance += amount;
-                _repo.UpdateBalance(sender);   // Save sender
-                _repo.UpdateBalance(receiver); // Save receiver
+                _repo.UpdateBalance(sender);  
+                _repo.UpdateBalance(receiver); 
                 System.Console.WriteLine("Transfer Successful!");
             }
         }
