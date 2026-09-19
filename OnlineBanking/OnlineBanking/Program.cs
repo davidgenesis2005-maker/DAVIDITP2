@@ -2,6 +2,8 @@
 using BankApp.Models;
 using BankApp.AppService;
 using BankApp.DataServices;
+using Microsoft.Extensions.Configuration;
+using OnlineBanking; 
 
 namespace BankApp.ConsoleUI
 {
@@ -9,6 +11,13 @@ namespace BankApp.ConsoleUI
     {
         static void Main(string[] args)
         {
+            IConfiguration configuration = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+
+            EmailService emailService = new EmailService(configuration);
+
             UserRepository repo = new UserRepository();
             BankService bankService = new BankService();
             User currentUser = null;
@@ -80,12 +89,44 @@ namespace BankApp.ConsoleUI
                 {
                     case 1:
                         Console.Write("Deposit Amount: ");
-                        bankService.Deposit(currentUser, double.Parse(Console.ReadLine()));
+                        double depositAmt = double.Parse(Console.ReadLine());
+                        bankService.Deposit(currentUser, depositAmt);
+                        Console.Write("Send notification to email: ");
+                        string depositEmail = Console.ReadLine();
+                        if (!string.IsNullOrWhiteSpace(depositEmail))
+                        {
+                            try
+                            {
+                                emailService.SendEmail(currentUser.AccountNumber, depositEmail, "Deposit", depositAmt, currentUser.Balance);
+                                Console.WriteLine(">> Email sent successfully.");
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($">> Email failed: {ex.Message}");
+                            }
+                        }
                         break;
+
                     case 2:
                         Console.Write("Withdraw Amount: ");
-                        bankService.Withdraw(currentUser, double.Parse(Console.ReadLine()));
+                        double withdrawAmt = double.Parse(Console.ReadLine());
+                        bankService.Withdraw(currentUser, withdrawAmt);
+                        Console.Write("Send notification to email: ");
+                        string withdrawEmail = Console.ReadLine();
+                        if (!string.IsNullOrWhiteSpace(withdrawEmail))
+                        {
+                            try
+                            {
+                                emailService.SendEmail(currentUser.AccountNumber, withdrawEmail, "Withdrawal", withdrawAmt, currentUser.Balance);
+                                Console.WriteLine(">> Email sent successfully.");
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($">> Email failed: {ex.Message}");
+                            }
+                        }
                         break;
+
                     case 3:
                         Console.Write("Recipient Account Number: ");
                         string recAcc = Console.ReadLine();
@@ -94,10 +135,27 @@ namespace BankApp.ConsoleUI
                         if (recipient != null)
                         {
                             Console.Write("Amount: ");
-                            bankService.SendMoney(currentUser, recipient, double.Parse(Console.ReadLine()));
+                            double transferAmt = double.Parse(Console.ReadLine());
+                            bankService.SendMoney(currentUser, recipient, transferAmt);
+
+                            Console.Write("Send notification to email: ");
+                            string transferEmail = Console.ReadLine();
+                            if (!string.IsNullOrWhiteSpace(transferEmail))
+                            {
+                                try
+                                {
+                                    emailService.SendEmail(currentUser.AccountNumber, transferEmail, "Transfer", transferAmt, currentUser.Balance);
+                                    Console.WriteLine(">> Email sent successfully.");
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine($">> Email failed: {ex.Message}");
+                                }
+                            }
                         }
                         else Console.WriteLine("Recipient not found.");
                         break;
+
                     case 4:
                         Console.WriteLine($"Account: {currentUser.AccountName}");
                         Console.WriteLine($"Number:  {currentUser.AccountNumber}");
